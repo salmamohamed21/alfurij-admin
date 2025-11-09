@@ -17,7 +17,7 @@ class Transaction extends Model
         'balance_after' => 'decimal:2',
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function user()
     {
         return $this->belongsTo(User::class);

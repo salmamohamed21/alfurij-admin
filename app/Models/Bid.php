@@ -15,7 +15,7 @@ class Bid extends Model
         'is_auto_bid' => 'boolean',
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function auction()
     {
         return $this->belongsTo(Auction::class);

@@ -16,7 +16,7 @@ class AuctionParticipant extends Model
         'total_spent' => 'decimal:2',
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function auction()
     {
         return $this->belongsTo(Auction::class);

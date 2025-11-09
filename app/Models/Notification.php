@@ -15,7 +15,7 @@ class Notification extends Model
         'is_read' => 'boolean',
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function user()
     {
         return $this->belongsTo(User::class);

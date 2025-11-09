@@ -12,7 +12,7 @@ class Favorite extends Model
         'user_id', 'listing_id', 'created_at'
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function user()
     {
         return $this->belongsTo(User::class);

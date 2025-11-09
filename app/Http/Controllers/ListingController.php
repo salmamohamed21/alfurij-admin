@@ -10,7 +10,7 @@ use App\Http\Resources\ListingResource;
 
 class ListingController extends Controller
 {
-    // ✅ عرض كل الإعلانات (مع فلاتر اختيارية)
+    //  عرض كل الإعلانات (مع فلاتر اختيارية)
     public function index(Request $request)
     {
         try {
@@ -33,7 +33,7 @@ class ListingController extends Controller
         }
     }
 
-    // ✅ إنشاء إعلان جديد
+    //  إنشاء إعلان جديد
     public function store(Request $request)
     {
         try {
@@ -77,7 +77,7 @@ class ListingController extends Controller
         }
     }
 
-    // ✅ عرض إعلان محدد
+    //  عرض إعلان محدد
     public function show(Listing $listing)
     {
         try {
@@ -88,7 +88,7 @@ class ListingController extends Controller
         }
     }
 
-    // ✅ تحديث إعلان
+    //  تحديث إعلان
     public function update(Request $request, Listing $listing)
     {
         try {
@@ -108,7 +108,7 @@ class ListingController extends Controller
         }
     }
 
-    // ✅ حذف إعلان
+    //  حذف إعلان
     public function destroy(Listing $listing)
     {
         try {
@@ -125,7 +125,7 @@ class ListingController extends Controller
         }
     }
 
-    // ✅ موافقة الأدمن على إعلان
+    //  موافقة الأدمن على إعلان
     public function approve(Listing $listing)
     {
         try {

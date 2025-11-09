@@ -11,7 +11,7 @@ use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
-    // ✅ تسجيل مستخدم جديد
+    //  تسجيل مستخدم جديد
     public function register(Request $request)
     {
         try {
@@ -51,7 +51,7 @@ class AuthController extends Controller
         }
     }
 
-    // ✅ تسجيل الدخول
+    //  تسجيل الدخول
     public function login(Request $request)
     {
         try {
@@ -94,7 +94,7 @@ class AuthController extends Controller
         }
     }
 
-    // ✅ تسجيل الخروج
+    //  تسجيل الخروج
     public function logout(Request $request)
     {
         try {

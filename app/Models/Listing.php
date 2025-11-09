@@ -24,7 +24,7 @@ class Listing extends Model
         'approved_at' => 'datetime',
     ];
 
-    // 🔗 Relationships
+    //  Relationships
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id');

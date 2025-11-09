@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class AdminAuthController extends Controller
 {
-    // ✅ إنشاء حساب أدمن جديد
+    //  إنشاء حساب أدمن جديد
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -47,12 +47,12 @@ class AdminAuthController extends Controller
         return response()->json(['message' => 'بيانات الدخول غير صحيحة.'], 401);
     }
 
-    // ✅ السماح فقط للأدمن
+    //  السماح فقط للأدمن
     if ($admin->role !== 'admin') {
         return response()->json(['message' => 'غير مصرح لك بالدخول إلى لوحة الأدمن.'], 403);
     }
 
-    // ✅ هنا حذفنا التحقق من email_verified_at
+    //  هنا حذفنا التحقق من email_verified_at
     // لأن الأدمن يمكنه الدخول حتى لو البريد غير مفعّل
 
     $token = $admin->createToken('admin_token')->plainTextToken;
@@ -65,7 +65,7 @@ class AdminAuthController extends Controller
 }
 
 
-    // ✅ تسجيل خروج الأدمن
+    //  تسجيل خروج الأدمن
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
