@@ -3,8 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Console\Scheduling\Schedule;
 use App\Http\Middleware\admin;
-
 use App\Http\Middleware\user;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,10 +15,20 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-   $middleware->alias([
-            'admin' => admin::class,
-            'user'=>user::class
-        ]);    })
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\Admin::class,
+            'user' => user::class,
+        ]);
+
+        $middleware->appendToGroup('api', [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        //  تحديث حالة المزادات كل دقيقة
+        $schedule->command('auctions:update-status')->everyMinute();
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();
