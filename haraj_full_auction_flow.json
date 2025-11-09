@@ -1,0 +1,230 @@
+{
+  "info": {
+    "name": "Haraj Full Auction Flow",
+    "_postman_id": "cfe8f74e-9f90-4d3c-bf9e-b55f4d11eaf5",
+    "description": "Complete flow: login, create listing, topup wallet, create auction, join, bid, finish, refund check.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
+    { "key": "admin_token", "value": "" },
+    { "key": "user1_token", "value": "" },
+    { "key": "user2_token", "value": "" },
+    { "key": "listing_id", "value": "" },
+    { "key": "auction_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"12345678\"\n}"
+        },
+        "url": "{{base_url}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "pm.environment.set('admin_token', res.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "User1 Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamed0266@gmail.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": "{{base_url}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "pm.environment.set('user1_token', res.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "User2 Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamedsaad228@gmail.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": "{{base_url}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "pm.environment.set('user2_token', res.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Create Listing",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ad_type\": \"auction\",\n  \"title\": \"Toyota Hilux 2022\",\n  \"category\": \"Cars\",\n  \"section\": \"Pickup\",\n  \"city\": \"Jeddah\",\n  \"description\": \"Hilux in perfect condition\",\n  \"price\": 90000,\n  \"condition\": \"used\",\n  \"model\": \"Hilux\",\n  \"serial_number\": \"THX23456\",\n  \"fuel_type\": \"Diesel\",\n  \"transmission\": \"Manual\",\n  \"color\": \"White\"\n}"
+        },
+        "url": "{{base_url}}/listings"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "pm.environment.set('listing_id', res.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Create Scheduled Auction",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"listing_id\": {{listing_id}},\n  \"type\": \"scheduled\",\n  \"start_time\": \"2025-11-09T10:00:00Z\",\n  \"end_time\": \"2025-11-10T10:00:00Z\",\n  \"starting_price\": 70000,\n  \"reserve_price\": 85000,\n  \"min_increment\": 500\n}"
+        },
+        "url": "{{base_url}}/auctions"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "pm.environment.set('auction_id', res.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "User1 Wallet Topup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user1_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"amount\": 100000 }" },
+        "url": "{{base_url}}/wallet/topup"
+      }
+    },
+    {
+      "name": "User2 Wallet Topup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user2_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"amount\": 80000 }" },
+        "url": "{{base_url}}/wallet/topup"
+      }
+    },
+    {
+      "name": "User1 Place Bid 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user1_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"amount\": 72000 }" },
+        "url": "{{base_url}}/auctions/{{auction_id}}/bid"
+      }
+    },
+    {
+      "name": "User2 Place Bid 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user2_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"amount\": 74000 }" },
+        "url": "{{base_url}}/auctions/{{auction_id}}/bid"
+      }
+    },
+    {
+      "name": "User1 Place Bid 3 (Higher)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user1_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{ \"amount\": 76000 }" },
+        "url": "{{base_url}}/auctions/{{auction_id}}/bid"
+      }
+    },
+    {
+      "name": "Admin Finish Auction",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/auctions/{{auction_id}}/finish"
+      }
+    },
+    {
+      "name": "User1 Transactions (Check Refund)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user1_token}}" }
+        ],
+        "url": "{{base_url}}/wallet/transactions"
+      }
+    },
+    {
+      "name": "User2 Transactions (Check Refund)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{user2_token}}" }
+        ],
+        "url": "{{base_url}}/wallet/transactions"
+      }
+    }
+  ]
+}

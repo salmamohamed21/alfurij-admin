@@ -26,6 +26,7 @@ class AdminAuthController extends Controller
             'password' => bcrypt($validated['password']),
             'role' => 'admin',
             'is_verified' => true,
+            'email_verified_at' => now(),
         ]);
 
         return response()->json([

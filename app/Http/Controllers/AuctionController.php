@@ -102,6 +102,8 @@ class AuctionController extends Controller
                     'join_fee' => $auction->join_fee
                 ]);
 
+                $auction->increment('participants_count');
+
                 Transaction::create([
                     'user_id' => $user->id,
                     'wallet_id' => $wallet->id,

@@ -1,0 +1,221 @@
+{
+  "info": {
+    "_postman_id": "c57e4a11-b6c3-4a5d-a3b0-c2b8f346fa1a",
+    "name": "Harag - Direct Sale (Buy Now) Flow (Admin + User Seller)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": " Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"12345678\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/admin/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "admin", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('ADMIN_TOKEN', json.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " Seller Login (User 1)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamed0266@gmail.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/auth/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auth", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('USER_TOKEN', json.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " Seller Top-up Wallet",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 120000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/topup", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "topup"] }
+      }
+    },
+    {
+      "name": " Create Direct Sale Listing (User Seller)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ad_type\": \"ad\",\n  \"buy_now\": true,\n  \"title\": \"Hyundai Tucson 2023\",\n  \"category\": \"Cars\",\n  \"section\": \"SUV\",\n  \"city\": \"Jeddah\",\n  \"description\": \"Excellent condition, full option\",\n  \"price\": 95000,\n  \"condition\": \"used\",\n  \"model\": \"Tucson\",\n  \"serial_number\": \"HYTUC2023SN1\",\n  \"fuel_type\": \"Petrol\",\n  \"transmission\": \"Automatic\",\n  \"color\": \"Gray\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/listings", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "listings"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var res = pm.response.json();",
+              "pm.environment.set('USER_LISTING_ID', res.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " Admin Approve Listing (User Seller)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }
+        ],
+        "url": { "raw": "http://127.0.0.1:8000/api/listings/{{USER_LISTING_ID}}/approve", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "listings", "{{USER_LISTING_ID}}", "approve"] }
+      }
+    },
+    {
+      "name": " Buyer Login (User 2)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamedsaad228@gmail.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/auth/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auth", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('BUYER_TOKEN', json.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " Buyer Top-up Wallet",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{BUYER_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 100000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/topup", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "topup"] }
+      }
+    },
+    {
+      "name": " Buyer Purchase (Buy Now from User Seller)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{BUYER_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"listing_id\": {{USER_LISTING_ID}}\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/purchase", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "purchase"] }
+      }
+    },
+    {
+      "name": " Buyer Transactions After Purchase (User Seller)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{BUYER_TOKEN}}" }],
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/transactions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "transactions"] }
+      }
+    },
+    {
+      "name": " Seller Transactions (Confirm Received)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{USER_TOKEN}}" }],
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/transactions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "transactions"] }
+      }
+    },
+
+    {
+      "name": " Admin Creates Direct Sale Listing (Company Sale)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ad_type\": \"ad\",\n  \"buy_now\": true,\n  \"title\": \"Toyota Land Cruiser 2024\",\n  \"category\": \"Cars\",\n  \"section\": \"SUV\",\n  \"city\": \"Riyadh\",\n  \"description\": \"Brand new car from company stock\",\n  \"price\": 180000,\n  \"condition\": \"new\",\n  \"model\": \"Land Cruiser\",\n  \"serial_number\": \"TLC2024SN88\",\n  \"fuel_type\": \"Petrol\",\n  \"transmission\": \"Automatic\",\n  \"color\": \"Black\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/listings", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "listings"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var res = pm.response.json();",
+              "pm.environment.set('ADMIN_LISTING_ID', res.data.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " Buyer Purchase (Buy Now from Admin Listing)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{BUYER_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"listing_id\": {{ADMIN_LISTING_ID}}\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/purchase", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "purchase"] }
+      }
+    },
+    {
+      "name": " Buyer Transactions After Company Purchase",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{BUYER_TOKEN}}" }],
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/transactions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "transactions"] }
+      }
+    },
+    {
+      "name": " Company Wallet Transactions (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" }],
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/transactions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "transactions"] }
+      }
+    }
+  ]
+}

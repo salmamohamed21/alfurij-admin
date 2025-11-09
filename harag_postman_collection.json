@@ -1,162 +1,224 @@
 {
   "info": {
-    "name": "Harag API Collection",
-    "description": "Postman collection for testing Harag backend API endpoints",
+    "_postman_id": "a3d8f97c-15c8-4cf3-b4df-90b07e89e2cc",
+    "name": "Harag Auction (Live Test Scenario)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    { "key": "base_url", "value": "http://127.0.0.1:8000/api" },
-    { "key": "token", "value": "" },
-    { "key": "admin_token", "value": "" },
-    { "key": "user_id", "value": "" },
-    { "key": "listing_id", "value": "" },
-    { "key": "auction_id", "value": "" },
-    { "key": "hash", "value": "" }
-  ],
   "item": [
     {
-      "name": "User Authentication",
-      "item": [
-        {
-          "name": "Register User",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+966501234567\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
-            },
-            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth", "register"] }
-          }
+      "name": " Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"12345678\"\n}"
         },
+        "url": { "raw": "http://127.0.0.1:8000/api/auth/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auth", "login"] }
+      },
+      "event": [
         {
-          "name": "Login User",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}" },
-            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('token', jsonData.access_token);",
-                  "    pm.collectionVariables.set('user_id', jsonData.user.id);",
-                  "}"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "name": "Resend Verification Email",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
-            "url": { "raw": "{{base_url}}/email/resend", "host": ["{{base_url}}"], "path": ["email", "resend"] }
-          }
-        },
-        {
-          "name": "Verify Email",
-          "request": {
-            "method": "GET",
-            "url": { "raw": "{{base_url}}/email/verify/{{user_id}}/{{hash}}", "host": ["{{base_url}}"], "path": ["email", "verify", "{{user_id}}", "{{hash}}"] },
-            "description": "Replace {{hash}} with the actual hash from email"
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('ADMIN_TOKEN', json.access_token);"
+            ]
           }
         }
       ]
     },
     {
-      "name": "Admin Authentication",
-      "item": [
-        {
-          "name": "Register Admin",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"phone\": \"+966509876543\",\n  \"password\": \"adminpass123\",\n  \"password_confirmation\": \"adminpass123\"\n}" },
-            "url": { "raw": "{{base_url}}/admin/register", "host": ["{{base_url}}"], "path": ["admin", "register"] }
-          }
+      "name": " Admin Create Listing (Approved)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"ad_type\": \"auction\",\n  \"title\": \"Toyota Camry 2024\",\n  \"category\": \"Cars\",\n  \"section\": \"Vehicles\",\n  \"city\": \"Riyadh\",\n  \"description\": \"Full option Camry 2024\",\n  \"price\": 95000,\n  \"condition\": \"new\",\n  \"model\": \"Camry\",\n  \"serial_number\": \"CM2024SN1\",\n  \"fuel_type\": \"Petrol\",\n  \"transmission\": \"Automatic\",\n  \"color\": \"Black\"\n}"
         },
+        "url": { "raw": "http://127.0.0.1:8000/api/listings", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "listings"] }
+      },
+      "event": [
         {
-          "name": "Login Admin",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"adminpass123\"\n}" },
-            "url": { "raw": "{{base_url}}/admin/login", "host": ["{{base_url}}"], "path": ["admin", "login"] }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('admin_token', jsonData.token);",
-                  "}"
-                ]
-              }
-            }
-          ]
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var res = pm.response.json();",
+              "pm.environment.set('LISTING_ID', res.data.id);"
+            ]
+          }
         }
       ]
     },
     {
-      "name": "Listings and Auctions",
-      "item": [
+      "name": " Admin Create Live Auction",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"listing_id\": {{LISTING_ID}},\n  \"type\": \"live\",\n  \"live_stream_time\": \"2025-11-10T18:00:00Z\",\n  \"starting_price\": 80000,\n  \"reserve_price\": 90000,\n  \"min_increment\": 1000\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions"] }
+      },
+      "event": [
         {
-          "name": "Create Listing",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{token}}" },
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": { "mode": "raw", "raw": "{\n  \"ad_type\": \"ad\",\n  \"title\": \"Toyota Camry 2020\",\n  \"category\": \"Cars\",\n  \"section\": \"Sedan\",\n  \"city\": \"Riyadh\",\n  \"description\": \"Excellent condition\",\n  \"price\": 50000,\n  \"condition\": \"Used\",\n  \"model\": \"Camry\",\n  \"serial_number\": \"ABC123\",\n  \"vehicle_type\": \"Sedan\",\n  \"fuel_type\": \"Gasoline\",\n  \"transmission\": \"Automatic\",\n  \"color\": \"White\",\n  \"media\": [\"image1.jpg\"],\n  \"documents\": [\"doc1.pdf\"],\n  \"buy_now\": true\n}" },
-            "url": { "raw": "{{base_url}}/listings", "host": ["{{base_url}}"], "path": ["listings"] }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 201) {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('listing_id', jsonData.data.id);",
-                  "}"
-                ]
-              }
-            }
-          ]
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var res = pm.response.json();",
+              "pm.environment.set('AUCTION_ID', res.data.id);"
+            ]
+          }
         }
       ]
     },
     {
-      "name": "Logout",
-      "item": [
-        {
-          "name": "Logout User",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
-            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth", "logout"] }
-          }
+      "name": " User1 Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamed0266@gmail.com\",\n  \"password\": \"123456\"\n}"
         },
+        "url": { "raw": "http://127.0.0.1:8000/api/auth/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auth", "login"] }
+      },
+      "event": [
         {
-          "name": "Logout Admin",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
-            "url": { "raw": "{{base_url}}/admin/logout", "host": ["{{base_url}}"], "path": ["admin", "logout"] }
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('USER1_TOKEN', json.access_token);"
+            ]
           }
         }
       ]
+    },
+    {
+      "name": " User1 Top-up Wallet",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER1_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 100000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/topup", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "topup"] }
+      }
+    },
+    {
+      "name": " User2 Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"salmamohamedsaad228@gmail.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": { "raw": "http://127.0.0.1:8000/api/auth/login", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auth", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var json = pm.response.json();",
+              "pm.environment.set('USER2_TOKEN', json.access_token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": " User2 Top-up Wallet",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER2_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 90000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/topup", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "topup"] }
+      }
+    },
+    {
+      "name": " Admin Start Auction (Live)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions/{{AUCTION_ID}}/start", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions", "{{AUCTION_ID}}", "start"] }
+      }
+    },
+    {
+      "name": " User1 Bid (15000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER1_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 15000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions/{{AUCTION_ID}}/bid", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions", "{{AUCTION_ID}}", "bid"] }
+      }
+    },
+    {
+      "name": " User2 Bid (16000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER2_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 16000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions/{{AUCTION_ID}}/bid", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions", "{{AUCTION_ID}}", "bid"] }
+      }
+    },
+    {
+      "name": " User1 Bid (17000)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER1_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"amount\": 17000\n}" },
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions/{{AUCTION_ID}}/bid", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions", "{{AUCTION_ID}}", "bid"] }
+      }
+    },
+    {
+      "name": " Admin Finish Auction",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{ADMIN_TOKEN}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "http://127.0.0.1:8000/api/auctions/{{AUCTION_ID}}/finish", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "auctions", "{{AUCTION_ID}}", "finish"] }
+      }
+    },
+    {
+      "name": " User2 Check Wallet (Refund)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{USER2_TOKEN}}" }
+        ],
+        "url": { "raw": "http://127.0.0.1:8000/api/wallet/transactions", "protocol": "http", "host": ["127.0.0.1"], "port": "8000", "path": ["api", "wallet", "transactions"] }
+      }
     }
   ]
 }

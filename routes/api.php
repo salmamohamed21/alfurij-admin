@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController ;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\AuctionController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -92,6 +93,17 @@ Route::get('/email/verify/{id}/{hash}', function ($id, $hash, Request $request) 
 })->middleware(['signed'])->name('verification.verify');
 
 // ============================
+//  User Route
+// ============================
+
+//  المستخدم
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [UserController::class, 'show']);
+    Route::post('/user/update', [UserController::class, 'update']);
+    Route::post('/user/change-password', [UserController::class, 'changePassword']);
+});
+
+// ============================
 //  Admin Authentication Routes
 // ============================
 
@@ -108,6 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('listings', ListingController::class);
     Route::post('/listings/{listing}/approve', [ListingController::class, 'approve']);
 });
+
 // ============================
 //  Auction Route
 // ============================
@@ -129,6 +142,13 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/auctions/{id}/start', [AuctionController::class, 'start']);
     
 });
+
+// ============================
+//  Purchase Route
+// ============================
+
+//  المستخدم
+Route::middleware('auth:sanctum')->post('/purchase', [PurchaseController::class, 'purchase']);
 
 // ============================
 //  Wallet Route

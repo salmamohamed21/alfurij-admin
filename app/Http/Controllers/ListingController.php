@@ -59,6 +59,7 @@ class ListingController extends Controller
 
             $validated['seller_id'] = Auth::id();
             $validated['approval_status'] = Auth::user()->role === 'admin' ? 'approved' : 'pending';
+            $validated['status'] = 'active'; // Set status to active for new listings
 
             $listing = Listing::create($validated);
 
@@ -137,6 +138,7 @@ class ListingController extends Controller
                 'approval_status' => 'approved',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
+                'status' => 'active', // Set status to active when approved
             ]);
 
             return response()->json(['message' => 'Listing approved successfully']);
