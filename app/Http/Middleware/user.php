@@ -16,17 +16,13 @@ class user
      */
     public function handle(Request $request, Closure $next): Response
     {
-if(Auth::user()->role == 0){
-    // User is a regular user
-    return $next($request);
-} 
-else
-{
-    // User is not a regular user (admin or seller)
-    return response()->json(['message' => 'Unauthorized'], 403);
-}
-
-
-}
+        if (Auth::user()->role === \App\Models\User::ROLE_USER) {
+            // User is a regular user
+            return $next($request);
+        } else {
+            // User is not a regular user (admin or seller)
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+    }
 }
 

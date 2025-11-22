@@ -10,7 +10,8 @@ class Admin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()?->role !== 'admin') {
+        $user = auth()->user();
+        if (!$user || !in_array($user->role, [\App\Models\User::ROLE_ADMIN, \App\Models\User::ROLE_SUPER_ADMIN])) {
             return response()->json(['message' => 'Access denied. Admins only.'], 403);
         }
 

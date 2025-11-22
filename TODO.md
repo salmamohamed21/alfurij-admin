@@ -1,4 +1,10 @@
-# TODO: Update participants_count in AuctionController
+# TODO: Implement Points-Based Currency System
 
-- [x] Edit app/Http/Controllers/AuctionController.php in the join method to increment participants_count after creating AuctionParticipant.
-- [ ] Test the join functionality by joining an auction and verifying participants_count increments in the database.
+## Steps to Complete
+
+- [x] Create app/Helpers/CurrencyHelper.php with conversion functions
+- [x] Update composer.json to autoload the helper file
+- [x] Run composer dump-autoload
+- [x] Modify WalletController.php: Change topup to accept 'points', update show to return balance in SAR and points, update notifications
+- [x] Modify AuctionController.php: Change bid to accept 'points', update join and finish notifications to show points
+- [x] Modify ListingResource.php: Add price_in_sar and price_in_points fields

@@ -107,6 +107,18 @@ class PurchaseController extends Controller
                     'balance_after' => $companyWallet->balance,
                     'description' => 'Income from sale of listing #' . $listing->id,
                 ]);
+
+                // إرسال إشعار للمشتري
+                $buyer->notify(new \App\Notifications\GeneralNotification(
+                    'تم الشراء بنجاح',
+                    'تم شراء الإعلان بمبلغ ' . $listing->price . ' ريال بنجاح.'
+                ));
+
+                // إرسال إشعار للبائع
+                $seller->notify(new \App\Notifications\GeneralNotification(
+                    'تم بيع الإعلان',
+                    'تم بيع إعلانك بمبلغ ' . $listing->price . ' ريال.'
+                ));
             });
 
             return response()->json(['message' => 'Purchase completed successfully']);

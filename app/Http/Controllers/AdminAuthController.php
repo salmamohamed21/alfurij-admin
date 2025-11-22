@@ -17,6 +17,7 @@ class AdminAuthController extends Controller
             'email' => 'required|email|unique:users',
             'phone' => 'required|string|unique:users',
             'password' => 'required|min:8|confirmed',
+            'role' => 'required|in:Admin,SuperAdmin',
         ]);
 
         $admin = User::create([
@@ -24,7 +25,7 @@ class AdminAuthController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'password' => bcrypt($validated['password']),
-            'role' => 'admin',
+            'role' => $validated['role'],
             'is_verified' => true,
             'email_verified_at' => now(),
         ]);
@@ -49,7 +50,7 @@ class AdminAuthController extends Controller
     }
 
     //  السماح فقط للأدمن
-    if ($admin->role !== 'admin') {
+    if (!in_array($admin->role, [\App\Models\User::ROLE_ADMIN, \App\Models\User::ROLE_SUPER_ADMIN])) {
         return response()->json(['message' => 'غير مصرح لك بالدخول إلى لوحة الأدمن.'], 403);
     }
 

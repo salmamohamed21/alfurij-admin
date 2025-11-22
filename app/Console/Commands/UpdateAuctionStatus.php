@@ -21,12 +21,12 @@ class UpdateAuctionStatus extends Command
         $now = Carbon::now();
 
         //  فتح المزادات اللي بدأ وقتها
-        Auction::where('status', 'upcoming')
+        Auction::whereIn('status', ['upcoming', 'pending'])
             ->where('start_time', '<=', $now)
             ->update(['status' => 'opening']);
 
         //  إنهاء المزادات اللي انتهى وقتها
-        $finishedAuctions = Auction::where('status', 'opening')
+        $finishedAuctions = Auction::whereIn('status', ['opening', 'pending'])
             ->where('end_time', '<=', $now)
             ->get();
 

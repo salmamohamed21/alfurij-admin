@@ -27,10 +27,11 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
+                'role' => 'user',
             ]);
 
             // إرسال رابط التحقق
-            $user->sendEmailVerificationNotification();
+            $user->notify(new \App\Notifications\VerifyEmail());
 
             return response()->json([
                 'message' => 'Registration successful! Please check your email for verification link.',
@@ -111,4 +112,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'Logout failed. Please try again later.'], 500);
         }
     }
+
+
 }

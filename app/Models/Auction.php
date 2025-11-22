@@ -9,13 +9,15 @@ class Auction extends Model
     protected $fillable = [
         'listing_id', 'type', 'live_stream_time', 'start_time', 'end_time',
         'starting_price', 'current_price', 'reserve_price',
-        'min_increment', 'join_fee', 'status', 'winner_id', 'participants_count'
+        'min_increment', 'join_fee', 'status', 'winner_id', 'participants_count',
+        'stream_watch_url', 'stream_embed_url', 'video_id', 'platform', 'is_streaming', 'stream_started_at'
     ];
 
     protected $casts = [
         'live_stream_time' => 'datetime',
         'start_time' => 'datetime',
         'end_time' => 'datetime',
+        'is_streaming' => 'boolean',
     ];
 
     //  Relationships
@@ -37,5 +39,10 @@ class Auction extends Model
     public function winner()
     {
         return $this->belongsTo(User::class, 'winner_id');
+    }
+
+    public function streams()
+    {
+        return $this->hasMany(AuctionStream::class);
     }
 }
