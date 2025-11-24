@@ -12,7 +12,7 @@ jobs:
       # 1. Checkout repository
       - uses: actions/checkout@v4
 
-      # 2. Setup PHP environment
+      # 2. Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -20,7 +20,7 @@ jobs:
           extensions: mbstring, bcmath, xml, ctype, fileinfo, json, openssl, pdo_mysql
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
-      # 3. Check Composer version
+      # 3. Check Composer
       - name: Setup composer auth (if needed)
         run: composer --version
 
@@ -28,19 +28,11 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
-      # 5. Build Laravel frontend assets (optional)
-      - name: Prepare Laravel assets (if any)
-        run: |
-          if [ -f package.json ]; then
-            npm ci
-            npm run build || true
-          fi
-
-      # 6. Check vendor and assets
-      - name: Ensure vendor and built assets exist
+      # 5. Check vendor folder
+      - name: Ensure vendor exists
         run: ls -la
 
-      # 7. FTP Deploy to Hostinger
+      # 6. FTP Deploy to Hostinger
       - name: FTP Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
@@ -54,7 +46,6 @@ jobs:
           exclude: |
             .git*
             .github/
-            node_modules/
             tests/
             .env
             .env.*
