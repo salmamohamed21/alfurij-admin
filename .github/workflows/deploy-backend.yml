@@ -12,7 +12,7 @@ jobs:
       # 1. Checkout repository
       - uses: actions/checkout@v4
 
-      # 2. Setup PHP
+      # 2. Setup PHP 8.2
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -28,7 +28,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
-      # 5. Check vendor folder
+      # 5. Ensure vendor folder exists
       - name: Ensure vendor exists
         run: ls -la
 
@@ -42,7 +42,6 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           local-dir: .
           server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-          passive: true
           exclude: |
             .git*
             .github/
