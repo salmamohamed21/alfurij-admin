@@ -34,15 +34,15 @@ jobs:
       - name: Ensure vendor and built assets exist
         run: ls -la
 
-      - name: FTP Deploy Laravel to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@4.4.0
+      - name: FTP Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: .
-          server-dir: ${{ secrets.FTP_REMOTE_DIR }}   # set this to /public_html/api/
+          local-dir: dist
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}
           passive: true
           exclude: |
             .git*
