@@ -9,21 +9,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - uses: actions/checkout@v4
 
+      # 2. Setup PHP environment
       - name: Setup PHP
-        uses: shivammathur/setup-php@v3
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           extensions: mbstring, bcmath, xml, ctype, fileinfo, json, openssl, pdo_mysql
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
+      # 3. Check Composer version
       - name: Setup composer auth (if needed)
         run: composer --version
 
+      # 4. Install Composer dependencies
       - name: Install Composer dependencies
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
+      # 5. Build Laravel frontend assets (optional)
       - name: Prepare Laravel assets (if any)
         run: |
           if [ -f package.json ]; then
@@ -31,17 +36,19 @@ jobs:
             npm run build || true
           fi
 
+      # 6. Check vendor and assets
       - name: Ensure vendor and built assets exist
         run: ls -la
 
+      # 7. FTP Deploy to Hostinger
       - name: FTP Deploy to Hostinger
-        uses: shivammathur/setup-php@v3.28.0
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: dist
+          local-dir: .
           server-dir: ${{ secrets.FTP_REMOTE_DIR }}
           passive: true
           exclude: |
@@ -50,4 +57,4 @@ jobs:
             node_modules/
             tests/
             .env
-            .env.* 
+            .env.*
