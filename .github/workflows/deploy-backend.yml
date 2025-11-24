@@ -1,0 +1,53 @@
+name: Build and Deploy Laravel Backend to Hostinger (FTP)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  prepare-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v3
+        with:
+          php-version: '8.1'
+          extensions: mbstring, bcmath, xml, ctype, fileinfo, json, openssl, pdo_mysql
+          ini-values: post_max_size=256M, upload_max_filesize=256M
+
+      - name: Setup composer auth (if needed)
+        run: composer --version
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+      - name: Prepare Laravel assets (if any)
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+            npm run build || true
+          fi
+
+      - name: Ensure vendor and built assets exist
+        run: ls -la
+
+      - name: FTP Deploy Laravel to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@4.4.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: .
+          server-dir: ${{ secrets.FTP_REMOTE_DIR }}   # set this to /public_html/api/
+          passive: true
+          exclude: |
+            .git*
+            .github/
+            node_modules/
+            tests/
+            .env
+            .env.* 
